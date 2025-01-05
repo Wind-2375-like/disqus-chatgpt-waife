@@ -1,9 +1,10 @@
 import requests
 from .config import DISQUS_API_KEY, DISQUS_FORUM
+from .comment_processor import group_comments_for_main_and_small_account
 
 BASE_URL = "https://disqus.com/api/3.0"
 
-def get_latest_comments(limit=10):
+def get_latest_comments(limit=100):
     """
     Collects the latest comments from the Disqus forum.
     """
@@ -17,7 +18,7 @@ def get_latest_comments(limit=10):
     resp = requests.get(endpoint, params=params)
     resp.raise_for_status()
     data = resp.json()
-    return data["response"]
+    return group_comments_for_main_and_small_account(data["response"])
 
 
 def post_reply(parent_post_id, message):
